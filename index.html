@@ -1,0 +1,1411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Or Ben Ari | Cybersecurity Portfolio</title>
+  <meta name="description" content="The cybersecurity portfolio of Or Ben Ari, focused on detection engineering fundamentals, incident response workflows, malware analysis labs, defensive automation, and security operations." />
+  <meta name="theme-color" content="#07111b" />
+  <meta property="og:title" content="Or Ben Ari | Cybersecurity Portfolio" />
+  <meta property="og:description" content="Detection, incident response, defensive automation, and security lab work." />
+  <meta property="og:type" content="website" />
+  <meta name="color-scheme" content="dark light" />
+  <style>
+    :root {
+      --bg: #07111b;
+      --bg-soft: #0c1724;
+      --panel: rgba(9, 18, 31, 0.78);
+      --panel-strong: rgba(8, 16, 28, 0.94);
+      --card: rgba(14, 24, 38, 0.92);
+      --line: rgba(142, 255, 198, 0.10);
+      --line-strong: rgba(142, 255, 198, 0.20);
+      --text: #eef6ff;
+      --muted: #92a7bc;
+      --soft: #c2d0df;
+      --accent: #8effc6;
+      --accent-2: #67d6ff;
+      --accent-3: #ffd36c;
+      --danger: #ff8e8e;
+      --shadow: 0 30px 80px rgba(0, 0, 0, 0.34);
+      --radius: 28px;
+      --radius-sm: 18px;
+      --max: 1180px;
+      --nav-h: 78px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      color: var(--text);
+      line-height: 1.65;
+      background:
+        radial-gradient(circle at 15% 10%, rgba(142,255,198,0.08), transparent 22%),
+        radial-gradient(circle at 82% 12%, rgba(103,214,255,0.09), transparent 26%),
+        radial-gradient(circle at 50% 100%, rgba(103,214,255,0.05), transparent 30%),
+        linear-gradient(180deg, #060f18 0%, #08111c 35%, #07111b 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    body::before {
+      background-image:
+        linear-gradient(rgba(142,255,198,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(142,255,198,0.04) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: linear-gradient(180deg, rgba(0,0,0,0.55), rgba(0,0,0,0.12));
+      animation: gridFloat 18s linear infinite;
+      opacity: 0.48;
+    }
+
+    body::after {
+      background:
+        radial-gradient(circle at 20% 30%, rgba(103,214,255,0.06), transparent 0 18%),
+        radial-gradient(circle at 80% 50%, rgba(142,255,198,0.05), transparent 0 18%);
+      filter: blur(60px);
+      animation: ambientPulse 10s ease-in-out infinite alternate;
+      opacity: 0.7;
+    }
+
+    @keyframes gridFloat {
+      from { transform: translateY(0); }
+      to { transform: translateY(42px); }
+    }
+
+    @keyframes ambientPulse {
+      from { transform: scale(1) translateY(0); }
+      to { transform: scale(1.08) translateY(-10px); }
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .wrap {
+      width: min(calc(100% - 2rem), var(--max));
+      margin: 0 auto;
+    }
+
+    .skip-link {
+      position: absolute;
+      left: -999px;
+      top: auto;
+    }
+
+    .skip-link:focus {
+      left: 1rem;
+      top: 1rem;
+      z-index: 100;
+      background: #fff;
+      color: #000;
+      padding: 0.75rem 1rem;
+      border-radius: 12px;
+    }
+
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      backdrop-filter: blur(16px);
+      background: rgba(7, 14, 23, 0.75);
+      border-bottom: 1px solid rgba(142,255,198,0.09);
+    }
+
+    .nav-inner {
+      min-height: var(--nav-h);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.9rem;
+      min-width: 0;
+    }
+
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      flex: 0 0 42px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, rgba(142,255,198,0.18), rgba(103,214,255,0.15));
+      border: 1px solid rgba(142,255,198,0.16);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), 0 12px 30px rgba(0,0,0,0.24);
+      display: grid;
+      place-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .brand-mark::after {
+      content: "";
+      position: absolute;
+      inset: auto -20% -55% -20%;
+      height: 70%;
+      background: radial-gradient(circle, rgba(142,255,198,0.2), transparent 70%);
+      animation: pulseGlow 4s ease-in-out infinite;
+    }
+
+    .brand-mark svg {
+      width: 24px;
+      height: 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { transform: scale(0.95); opacity: 0.55; }
+      50% { transform: scale(1.12); opacity: 1; }
+    }
+
+    .brand-copy {
+      min-width: 0;
+      display: grid;
+      gap: 0.08rem;
+    }
+
+    .brand-copy strong {
+      font-size: 0.98rem;
+      letter-spacing: 0.08em;
+    }
+
+    .brand-copy span {
+      font-size: 0.8rem;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .nav-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      align-items: center;
+      justify-content: flex-end;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .nav-links a {
+      padding: 0.5rem 0.82rem;
+      border-radius: 999px;
+      transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+    }
+
+    .nav-links a:hover,
+    .nav-links a:focus-visible {
+      color: var(--text);
+      background: rgba(255,255,255,0.04);
+      transform: translateY(-1px);
+      outline: none;
+    }
+
+    .hero {
+      padding: 2.2rem 0 1.4rem;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.92fr);
+      gap: 1.25rem;
+      align-items: stretch;
+    }
+
+    .panel {
+      background: linear-gradient(180deg, rgba(11, 21, 33, 0.94), rgba(8, 16, 28, 0.94));
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    .panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(140deg, rgba(142,255,198,0.05), transparent 24%, transparent 75%, rgba(103,214,255,0.05));
+      pointer-events: none;
+    }
+
+    .hero-copy {
+      padding: 2.15rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 1.6rem;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      border-radius: 999px;
+      padding: 0.44rem 0.84rem;
+      background: rgba(142,255,198,0.07);
+      border: 1px solid rgba(142,255,198,0.16);
+      color: #dcfff1;
+      font-size: 0.92rem;
+      width: fit-content;
+    }
+
+    h1 {
+      margin: 0.9rem 0 1rem;
+      font-size: clamp(2.4rem, 5vw, 4.7rem);
+      line-height: 0.98;
+      letter-spacing: -0.05em;
+      max-width: 10ch;
+    }
+
+    .accent { color: var(--accent); }
+
+    .lede {
+      margin: 0;
+      max-width: 62ch;
+      font-size: 1.05rem;
+      color: var(--soft);
+    }
+
+    .meta-line {
+      margin-top: 1rem;
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      margin-top: 1.35rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.55rem;
+      padding: 0.88rem 1.08rem;
+      border-radius: 14px;
+      border: 1px solid transparent;
+      font-weight: 600;
+      transition: transform 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+    }
+
+    .btn:hover,
+    .btn:focus-visible {
+      transform: translateY(-2px);
+      outline: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, rgba(142,255,198,0.18), rgba(103,214,255,0.14));
+      border-color: rgba(142,255,198,0.18);
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.02);
+      border-color: rgba(255,255,255,0.08);
+      color: var(--soft);
+    }
+
+    .micro-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.85rem;
+    }
+
+    .micro {
+      padding: 0.95rem 1rem;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .micro strong {
+      display: block;
+      font-size: 1.05rem;
+      margin-bottom: 0.15rem;
+    }
+
+    .micro span {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .hero-visual {
+      min-height: 100%;
+      padding: 1.3rem;
+      display: flex;
+      align-items: stretch;
+    }
+
+    .signal-card {
+      position: relative;
+      width: 100%;
+      min-height: 460px;
+      border-radius: 24px;
+      overflow: hidden;
+      background:
+        linear-gradient(180deg, rgba(8,16,28,0.94), rgba(9,16,24,0.98)),
+        linear-gradient(120deg, rgba(142,255,198,0.08), transparent 28%, transparent 72%, rgba(103,214,255,0.08));
+      border: 1px solid rgba(142,255,198,0.12);
+    }
+
+    .signal-noise,
+    .signal-grid,
+    .signal-scan,
+    .signal-rings,
+    .signal-nodes,
+    .signal-terminal,
+    .signal-labels {
+      position: absolute;
+      inset: 0;
+    }
+
+    .signal-grid {
+      background-image:
+        linear-gradient(rgba(103,214,255,0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(103,214,255,0.08) 1px, transparent 1px);
+      background-size: 28px 28px;
+      mask-image: linear-gradient(180deg, rgba(0,0,0,0.8), transparent 95%);
+      opacity: 0.55;
+    }
+
+    .signal-noise {
+      background:
+        radial-gradient(circle at 20% 15%, rgba(142,255,198,0.18), transparent 0 12%),
+        radial-gradient(circle at 78% 28%, rgba(103,214,255,0.18), transparent 0 13%),
+        radial-gradient(circle at 60% 72%, rgba(142,255,198,0.12), transparent 0 10%);
+      filter: blur(40px);
+      opacity: 0.7;
+      animation: ambientPulse 8s ease-in-out infinite alternate;
+    }
+
+    .signal-scan::before,
+    .signal-scan::after {
+      content: "";
+      position: absolute;
+      left: -12%;
+      right: -12%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(142,255,198,0.75), transparent);
+      box-shadow: 0 0 22px rgba(142,255,198,0.45);
+    }
+
+    .signal-scan::before {
+      top: 20%;
+      animation: scanLine 9s linear infinite;
+    }
+
+    .signal-scan::after {
+      top: 60%;
+      animation: scanLine 11s linear infinite reverse;
+      opacity: 0.6;
+    }
+
+    @keyframes scanLine {
+      0% { transform: translateY(-40px); opacity: 0; }
+      10%, 90% { opacity: 1; }
+      100% { transform: translateY(230px); opacity: 0; }
+    }
+
+    .signal-rings {
+      display: grid;
+      place-items: center;
+    }
+
+    .ring,
+    .ring::before,
+    .ring::after {
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid rgba(103,214,255,0.18);
+    }
+
+    .ring {
+      width: 280px;
+      height: 280px;
+      animation: rotateSlow 16s linear infinite;
+    }
+
+    .ring::before,
+    .ring::after {
+      content: "";
+      inset: 18px;
+      border-color: rgba(142,255,198,0.18);
+    }
+
+    .ring::after {
+      inset: 52px;
+      border-color: rgba(255,255,255,0.08);
+    }
+
+    .ring-secondary {
+      width: 360px;
+      height: 360px;
+      border-style: dashed;
+      border-color: rgba(142,255,198,0.12);
+      animation: rotateSlow 22s linear infinite reverse;
+    }
+
+    @keyframes rotateSlow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .center-core {
+      position: absolute;
+      width: 134px;
+      height: 134px;
+      border-radius: 28px;
+      border: 1px solid rgba(142,255,198,0.18);
+      background: linear-gradient(180deg, rgba(10,21,34,0.94), rgba(8,14,24,0.98));
+      box-shadow: inset 0 0 40px rgba(103,214,255,0.06), 0 0 30px rgba(142,255,198,0.08);
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 1rem;
+    }
+
+    .center-core strong {
+      display: block;
+      letter-spacing: 0.14em;
+      font-size: 1rem;
+    }
+
+    .center-core span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.78rem;
+      margin-top: 0.2rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+    }
+
+    .signal-nodes .node {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow: 0 0 0 6px rgba(142,255,198,0.08), 0 0 20px rgba(103,214,255,0.35);
+      animation: nodePulse 3.5s ease-in-out infinite;
+    }
+
+    .signal-nodes .node::before {
+      content: "";
+      position: absolute;
+      inset: -70px auto auto -1px;
+      width: 2px;
+      height: 70px;
+      background: linear-gradient(180deg, rgba(103,214,255,0.25), transparent);
+      transform: rotate(var(--rot, 0deg));
+      transform-origin: bottom center;
+    }
+
+    .signal-nodes .node-1 { top: 16%; left: 26%; --rot: -40deg; }
+    .signal-nodes .node-2 { top: 25%; right: 22%; --rot: 35deg; animation-delay: 0.4s; }
+    .signal-nodes .node-3 { bottom: 23%; left: 20%; --rot: -22deg; animation-delay: 0.8s; }
+    .signal-nodes .node-4 { bottom: 18%; right: 20%; --rot: 18deg; animation-delay: 1.2s; }
+
+    @keyframes nodePulse {
+      0%, 100% { transform: scale(0.95); opacity: 0.8; }
+      50% { transform: scale(1.18); opacity: 1; }
+    }
+
+    .signal-labels {
+      color: var(--soft);
+      font-size: 0.82rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .signal-labels span {
+      position: absolute;
+      padding: 0.35rem 0.55rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(8,16,28,0.72);
+      color: var(--muted);
+      backdrop-filter: blur(8px);
+    }
+
+    .label-1 { top: 14%; left: 10%; }
+    .label-2 { top: 20%; right: 8%; }
+    .label-3 { bottom: 18%; left: 8%; }
+    .label-4 { bottom: 14%; right: 8%; }
+
+    .signal-terminal {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 1.25rem;
+    }
+
+    .terminal {
+      width: min(92%, 420px);
+      margin-bottom: 0.5rem;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(6,12,21,0.92);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.28);
+      overflow: hidden;
+    }
+
+    .terminal-top {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.7rem 0.9rem;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      color: var(--muted);
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.18);
+    }
+
+    .dot:first-child { background: rgba(255,142,142,0.8); }
+    .dot:nth-child(2) { background: rgba(255,211,108,0.84); }
+    .dot:nth-child(3) { background: rgba(142,255,198,0.84); }
+
+    .terminal-body {
+      padding: 1rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.88rem;
+      color: #d4e6f7;
+    }
+
+    .terminal-line {
+      display: flex;
+      gap: 0.8rem;
+      margin-bottom: 0.5rem;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .terminal-line span:first-child {
+      color: var(--accent);
+      flex: 0 0 auto;
+    }
+
+    .terminal-line span:last-child {
+      color: var(--soft);
+      width: 0;
+      animation: typing 5.5s steps(40, end) infinite;
+      overflow: hidden;
+      border-right: 1px solid rgba(142,255,198,0.4);
+    }
+
+    .terminal-line:nth-child(2) span:last-child { animation-delay: 0.9s; }
+    .terminal-line:nth-child(3) span:last-child { animation-delay: 1.7s; }
+    .terminal-line:nth-child(4) span:last-child { animation-delay: 2.5s; }
+
+    @keyframes typing {
+      0%, 12% { width: 0; }
+      22%, 65% { width: 100%; }
+      85%, 100% { width: 100%; border-color: transparent; }
+    }
+
+    section {
+      padding: 1rem 0;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: clamp(1.6rem, 2.6vw, 2.4rem);
+      letter-spacing: -0.03em;
+    }
+
+    .section-note {
+      margin: 0;
+      color: var(--muted);
+      max-width: 55ch;
+    }
+
+    .grid-2,
+    .grid-3,
+    .grid-4 {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+    .card {
+      padding: 1.2rem;
+      border-radius: 22px;
+      background: linear-gradient(180deg, rgba(13, 23, 36, 0.94), rgba(8, 16, 27, 0.95));
+      border: 1px solid rgba(255,255,255,0.06);
+      box-shadow: 0 20px 45px rgba(0,0,0,0.15);
+    }
+
+    .card h3,
+    .card h4 {
+      margin: 0 0 0.45rem;
+      font-size: 1.05rem;
+      letter-spacing: -0.02em;
+    }
+
+    .card p,
+    .card li,
+    .timeline-copy p {
+      color: var(--soft);
+    }
+
+    .muted { color: var(--muted); }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.55rem;
+      margin-top: 0.95rem;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.38rem 0.68rem;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      color: var(--muted);
+      font-size: 0.84rem;
+    }
+
+    .project-card {
+      padding: 1.35rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+      min-height: 100%;
+    }
+
+    .project-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      align-items: start;
+    }
+
+    .project-top span {
+      color: var(--accent);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      white-space: nowrap;
+    }
+
+    ul.clean {
+      padding-left: 1.15rem;
+      margin: 0;
+    }
+
+    ul.clean li + li { margin-top: 0.45rem; }
+
+    .timeline {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 185px minmax(0, 1fr);
+      gap: 1.1rem;
+      padding: 1.25rem;
+      border-radius: 22px;
+      background: linear-gradient(180deg, rgba(13, 23, 36, 0.94), rgba(8, 16, 27, 0.95));
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .timeline-meta {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .timeline-copy h3 {
+      margin: 0;
+      font-size: 1.08rem;
+    }
+
+    .timeline-copy strong {
+      display: block;
+      color: var(--accent);
+      margin: 0.18rem 0 0.55rem;
+      font-size: 0.93rem;
+      font-weight: 600;
+    }
+
+    .contact-card {
+      display: grid;
+      grid-template-columns: 1.3fr 0.9fr;
+      gap: 1rem;
+      padding: 1.35rem;
+      border-radius: 24px;
+      background: linear-gradient(135deg, rgba(12, 24, 38, 0.98), rgba(7, 14, 24, 0.98));
+      border: 1px solid rgba(142,255,198,0.12);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .contact-card::after {
+      content: "";
+      position: absolute;
+      width: 260px;
+      height: 260px;
+      border-radius: 50%;
+      right: -100px;
+      bottom: -120px;
+      background: radial-gradient(circle, rgba(103,214,255,0.18), transparent 70%);
+      pointer-events: none;
+    }
+
+    .contact-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+
+    .contact-lead {
+      max-width: 58ch;
+      font-size: 1.04rem;
+      color: var(--soft);
+    }
+
+    .contact-highlights {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+      margin-top: 1rem;
+    }
+
+    .contact-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.54rem 0.82rem;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--soft);
+      font-size: 0.9rem;
+    }
+
+    .contact-note {
+      margin-top: 1rem;
+      color: var(--muted);
+      max-width: 54ch;
+    }
+
+    .contact-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.65rem;
+      align-content: start;
+    }
+
+    .contact-item {
+      min-height: 102px;
+      padding: 0.95rem 1rem;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    footer {
+      padding: 1.5rem 0 2.5rem;
+      color: var(--muted);
+      font-size: 0.93rem;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .reveal.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .print-only { display: none; }
+
+    @media (max-width: 980px) {
+      .hero-grid,
+      .grid-4,
+      .grid-3,
+      .grid-2,
+      .contact-card,
+      .contact-list {
+        grid-template-columns: 1fr;
+      }
+
+      .timeline-item {
+        grid-template-columns: 1fr;
+      }
+
+      .nav-inner {
+        padding: 0.5rem 0;
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .nav-links {
+        justify-content: flex-start;
+      }
+
+      .signal-card {
+        min-height: 400px;
+      }
+
+      .micro-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .wrap { width: min(calc(100% - 1rem), var(--max)); }
+      .hero-copy,
+      .hero-visual,
+      .card,
+      .project-card,
+      .timeline-item,
+      .contact-card { padding: 1rem; }
+      .signal-card { min-height: 360px; }
+      h1 { max-width: 12ch; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+        scroll-behavior: auto !important;
+      }
+
+      .reveal {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    @media print {
+      body {
+        background: #fff;
+        color: #111;
+      }
+
+      body::before,
+      body::after,
+      .nav,
+      .signal-card,
+      .contact-actions,
+      footer {
+        display: none !important;
+      }
+
+      .panel,
+      .card,
+      .timeline-item,
+      .contact-card {
+        background: #fff;
+        color: #111;
+        border: 1px solid #ddd;
+        box-shadow: none;
+      }
+
+      .muted,
+      .tag,
+      .timeline-meta,
+      .timeline-copy strong,
+      .lede,
+      .section-note,
+      .meta-line,
+      .card p,
+      .card li,
+      .timeline-copy p {
+        color: #333 !important;
+      }
+
+      a { color: #111; text-decoration: none; }
+      .print-only { display: block; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="nav" aria-label="Primary">
+    <div class="wrap nav-inner">
+      <a class="brand" href="#top" aria-label="Or Ben Ari home">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2L18.5 5V11.2C18.5 15.3 15.8 19.1 12 20.5C8.2 19.1 5.5 15.3 5.5 11.2V5L12 2Z" stroke="url(#g)" stroke-width="1.4"/>
+            <path d="M13.2 6.7L9.4 12.2H12.1L10.8 17.2L14.9 11.3H12.1L13.2 6.7Z" fill="url(#g)"/>
+            <defs>
+              <linearGradient id="g" x1="5" y1="2" x2="19" y2="21" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#8effc6"/>
+                <stop offset="1" stop-color="#67d6ff"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </span>
+        <span class="brand-copy">
+          <strong>Or Ben Ari</strong>
+          <span>Cybersecurity portfolio</span>
+        </span>
+      </a>
+      <nav class="nav-links">
+        <a href="#about">About</a>
+        <a href="#capabilities">Capabilities</a>
+        <a href="#projects">Projects</a>
+        <a href="#experience">Experience</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero wrap" id="top">
+      <div class="hero-grid">
+        <div class="panel reveal">
+          <div class="hero-copy">
+            <div>
+              <div class="eyebrow">Detection · Incident Response · Defensive Automation</div>
+              <h1>Security work with a <span class="accent">clean signal.</span></h1>
+              <p class="lede">
+                I’m Or Ben Ari, a cybersecurity practitioner building structured detection, investigation, and lab-driven defensive workflows across Windows and Linux environments. My focus is practical security operations: alert triage, telemetry review, incident documentation, and automation that makes investigations more repeatable.
+              </p>
+              <p class="meta-line">Tel Aviv, Israel · Available for security analyst and SOC-facing roles</p>
+              <div class="hero-actions">
+                <a class="btn btn-primary" href="mailto:orbenaribs@gmail.com">Email me</a>
+                <a class="btn btn-secondary" href="https://github.com/orba-cyops" target="_blank" rel="noreferrer">GitHub</a>
+                <a class="btn btn-secondary" href="https://www.linkedin.com/in/or-ben-ari" target="_blank" rel="noreferrer">LinkedIn</a>
+                <a class="btn btn-secondary" href="https://medium.com/@OrBenAri" target="_blank" rel="noreferrer">Medium</a>
+              </div>
+            </div>
+            <div class="micro-grid" aria-label="Key strengths">
+              <div class="micro">
+                <strong>Alert triage</strong>
+                <span>Structured investigation, event correlation, and escalation-ready notes.</span>
+              </div>
+              <div class="micro">
+                <strong>Detection labs</strong>
+                <span>Hands-on practice with Wazuh, OSSEC, CrowdSec, Splunk, and isolated lab workflows.</span>
+              </div>
+              <div class="micro">
+                <strong>Automation mindset</strong>
+                <span>Python, PowerShell, and Linux-based scripting for repeatable tasks and cleaner analyst flow.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <aside class="panel hero-visual reveal" aria-label="Animated cybersecurity workflow visualization">
+          <div class="signal-card">
+            <div class="signal-noise"></div>
+            <div class="signal-grid"></div>
+            <div class="signal-scan"></div>
+            <div class="signal-rings">
+              <div class="ring-secondary"></div>
+              <div class="ring"></div>
+              <div class="center-core">
+                <div>
+                  <strong>OBA</strong>
+                  <span>security ops</span>
+                </div>
+              </div>
+            </div>
+            <div class="signal-nodes" aria-hidden="true">
+              <div class="node node-1"></div>
+              <div class="node node-2"></div>
+              <div class="node node-3"></div>
+              <div class="node node-4"></div>
+            </div>
+            <div class="signal-labels" aria-hidden="true">
+              <span class="label-1">collect</span>
+              <span class="label-2">correlate</span>
+              <span class="label-3">investigate</span>
+              <span class="label-4">document</span>
+            </div>
+            <div class="signal-terminal" aria-hidden="true">
+              <div class="terminal">
+                <div class="terminal-top">
+                  <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+                  <span>analyst / workflow</span>
+                </div>
+                <div class="terminal-body">
+                  <div class="terminal-line"><span>$</span><span>review telemetry and map suspicious activity</span></div>
+                  <div class="terminal-line"><span>$</span><span>extract indicators and validate context</span></div>
+                  <div class="terminal-line"><span>$</span><span>document findings for escalation and response</span></div>
+                  <div class="terminal-line"><span>$</span><span>refine workflow for the next investigation</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="wrap reveal" id="about">
+      <div class="section-head">
+        <div>
+          <h2>About</h2>
+          <p class="section-note">A focused, recruiter-friendly summary with clean structure and plain text for easy reading.</p>
+        </div>
+      </div>
+      <div class="grid-2">
+        <article class="card">
+          <h3>Professional summary</h3>
+          <p>
+            Cybersecurity practitioner with hands-on home-lab experience across Windows and Linux, specializing in alert triage, event correlation, and investigation workflows. I build repeatable SOC playbooks and lab-driven investigations by analyzing logs and telemetry, extracting indicators of compromise, and documenting findings for escalation and response.
+          </p>
+          <div class="tag-row" aria-label="Focus areas">
+            <span class="tag">SOC / IR</span>
+            <span class="tag">Telemetry Review</span>
+            <span class="tag">Threat Hunting</span>
+            <span class="tag">Investigation Notes</span>
+            <span class="tag">Windows + Linux</span>
+          </div>
+        </article>
+        <article class="card">
+          <h3>Working style</h3>
+          <p>
+            I bring operational discipline from leadership roles into cybersecurity work: staying calm under pressure, following process, communicating clearly, and keeping documentation usable. My projects are centered on repeatability, signal quality, and building practical workflows that support analysts and defenders.
+          </p>
+          <div class="tag-row" aria-label="Work style tags">
+            <span class="tag">Process-oriented</span>
+            <span class="tag">High-tempo execution</span>
+            <span class="tag">Continuous learning</span>
+            <span class="tag">Lab-driven growth</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="wrap reveal" id="capabilities">
+      <div class="section-head">
+        <div>
+          <h2>Core capabilities</h2>
+          <p class="section-note">Built for clarity, with concise categories and no visual clutter.</p>
+        </div>
+      </div>
+      <div class="grid-4">
+        <article class="card">
+          <h3>SOC & incident response</h3>
+          <p>Alert triage, event correlation, investigation workflow, incident documentation, and escalation-ready reporting.</p>
+        </article>
+        <article class="card">
+          <h3>Detection & visibility</h3>
+          <p>Splunk SPL searches and dashboards, Wazuh, OSSEC, log review, host-based visibility, and basic correlations.</p>
+        </article>
+        <article class="card">
+          <h3>Threat & malware labs</h3>
+          <p>Basic threat hunting, static and dynamic malware analysis, FLARE VM, REMnux, and guided investigation exercises.</p>
+        </article>
+        <article class="card">
+          <h3>Automation & infrastructure</h3>
+          <p>Python, PowerShell, Linux scripting, Cloudflare security workflows, Windows Server, DNS, DHCP, VMware ESXi, and isolated lab environments.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="wrap reveal" id="projects">
+      <div class="section-head">
+        <div>
+          <h2>Selected projects & lab work</h2>
+          <p class="section-note">Experience presented as plain-language project summaries, suitable for both recruiters and technical reviewers.</p>
+        </div>
+      </div>
+      <div class="grid-2">
+        <article class="card project-card">
+          <div class="project-top">
+            <div>
+              <h3>Raspberry Pi SOC workspace</h3>
+              <p class="muted">Home-lab security operations hub</p>
+            </div>
+            <span>Featured</span>
+          </div>
+          <ul class="clean">
+            <li>Built a dedicated workspace and system hub for structured security practice and day-to-day defensive lab operations.</li>
+            <li>Designed repeatable investigation flow for telemetry review, note-taking, and basic event analysis.</li>
+            <li>Used the environment as a foundation for operational discipline and hands-on defensive learning.</li>
+          </ul>
+          <div class="tag-row">
+            <span class="tag">Home Lab</span>
+            <span class="tag">Workflow Design</span>
+            <span class="tag">SOC Practice</span>
+          </div>
+        </article>
+
+        <article class="card project-card">
+          <div class="project-top">
+            <div>
+              <h3>Detection & defense workflows</h3>
+              <p class="muted">Wazuh, OSSEC, CrowdSec</p>
+            </div>
+            <span>Monitoring</span>
+          </div>
+          <ul class="clean">
+            <li>Built and practiced defensive monitoring workflows for alert review, log visibility, and basic incident detection.</li>
+            <li>Strengthened familiarity with host-based monitoring and multi-tool defensive thinking.</li>
+            <li>Focused on signal interpretation and investigation-ready analysis rather than tool-only setup.</li>
+          </ul>
+          <div class="tag-row">
+            <span class="tag">Wazuh</span>
+            <span class="tag">OSSEC</span>
+            <span class="tag">CrowdSec</span>
+          </div>
+        </article>
+
+        <article class="card project-card">
+          <div class="project-top">
+            <div>
+              <h3>IR, malware analysis & threat hunting labs</h3>
+              <p class="muted">Guided and isolated training environments</p>
+            </div>
+            <span>Analysis</span>
+          </div>
+          <ul class="clean">
+            <li>Completed lab exercises focused on alert triage, telemetry review, malware behavior observation, and structured reporting.</li>
+            <li>Documented findings and learning artifacts to improve investigation logic and analyst thinking.</li>
+            <li>Practiced safe, isolated analysis workflows using FLARE VM and REMnux-oriented environments.</li>
+          </ul>
+          <div class="tag-row">
+            <span class="tag">Threat Hunting</span>
+            <span class="tag">FLARE VM</span>
+            <span class="tag">REMnux</span>
+          </div>
+        </article>
+
+        <article class="card project-card">
+          <div class="project-top">
+            <div>
+              <h3>Linux & Active Directory automation</h3>
+              <p class="muted">CLI efficiency and repeatable task execution</p>
+            </div>
+            <span>Automation</span>
+          </div>
+          <ul class="clean">
+            <li>Built scripting exercises to improve investigation speed, system hygiene, and repeatable task execution.</li>
+            <li>Worked with Windows event and authentication context alongside Linux auth and system log review.</li>
+            <li>Used automation to reduce friction in lab operations and streamline analyst workflow.</li>
+          </ul>
+          <div class="tag-row">
+            <span class="tag">Python</span>
+            <span class="tag">PowerShell</span>
+            <span class="tag">Windows & AD</span>
+            <span class="tag">Linux</span>
+          </div>
+        </article>
+
+        <article class="card project-card">
+          <div class="project-top">
+            <div>
+              <h3>Cloudflare security workflow</h3>
+              <p class="muted">Protected access and stronger lab exposure</p>
+            </div>
+            <span>Access</span>
+          </div>
+          <ul class="clean">
+            <li>Implemented Cloudflare-based security workflows for domain protection and Zero Trust-oriented access control.</li>
+            <li>Strengthened protected exposure of lab resources while improving access security and management hygiene.</li>
+            <li>Combined infrastructure understanding with practical security controls in a personal lab setting.</li>
+          </ul>
+          <div class="tag-row">
+            <span class="tag">Cloudflare</span>
+            <span class="tag">Zero Trust</span>
+            <span class="tag">Access Control</span>
+          </div>
+        </article>
+
+        <article class="card project-card">
+          <div class="project-top">
+            <div>
+              <h3>Networking & security fundamentals</h3>
+              <p class="muted">Protocol awareness and traffic analysis</p>
+            </div>
+            <span>Foundation</span>
+          </div>
+          <ul class="clean">
+            <li>Built working knowledge of OSI, TCP/IP, DNS, HTTP, FTP, SSH, Telnet, VLANs, STP, and routing basics.</li>
+            <li>Practiced packet and host investigation workflows with Wireshark, Nmap, Netcat, and lab network scenarios.</li>
+            <li>Applied fundamentals to strengthen security context during triage and investigation tasks.</li>
+          </ul>
+          <div class="tag-row">
+            <span class="tag">Wireshark</span>
+            <span class="tag">Nmap</span>
+            <span class="tag">Netcat</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="wrap reveal" id="experience">
+      <div class="section-head">
+        <div>
+          <h2>Professional experience</h2>
+          <p class="section-note">Operational leadership that strengthens ownership, composure, and execution under pressure.</p>
+        </div>
+      </div>
+      <div class="timeline">
+        <article class="timeline-item">
+          <div class="timeline-meta">2023<br>Tel Aviv area</div>
+          <div class="timeline-copy">
+            <h3>Operations Manager</h3>
+            <strong>Wolt Market (BlackStore)</strong>
+            <p>
+              Managed end-to-end site operations across fast-moving daily workflows, led shift managers during live operations, and maintained service quality under pressure. Owned hiring, onboarding, and training while helping develop employees into leadership roles and supporting branch expansion.
+            </p>
+          </div>
+        </article>
+        <article class="timeline-item">
+          <div class="timeline-meta">2022<br>Herzliya</div>
+          <div class="timeline-copy">
+            <h3>Shift Supervisor</h3>
+            <strong>Greco Restaurant</strong>
+            <p>
+              Led shift teams in a high-tempo environment, maintained operational flow, coordinated execution during peak workload, and supported on-site events with disciplined communication and ownership.
+            </p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="wrap reveal" id="credentials">
+      <div class="section-head">
+        <div>
+          <h2>Certifications, training & tools</h2>
+          <p class="section-note">Focused learning path backed by hands-on security practice.</p>
+        </div>
+      </div>
+      <div class="grid-3">
+        <article class="card">
+          <h3>Certifications</h3>
+          <ul class="clean">
+            <li>Certified Cyber Homeland Security Specialist (CHCSS) — Kernelios College, 2026</li>
+            <li>Linux Professional Institute (LPI) — Kernelios College, 2025</li>
+          </ul>
+        </article>
+        <article class="card">
+          <h3>Education & training</h3>
+          <ul class="clean">
+            <li>CHCSS — Kernelios College (Nov 2025 – Mar 2026)</li>
+            <li>Military education — Marine Mechanic, Navy service (2017 – 2019)</li>
+            <li>Full Matriculation Diploma — Lady Davis High School</li>
+          </ul>
+        </article>
+        <article class="card">
+          <h3>Working toolset</h3>
+          <p>Splunk, Wazuh, OSSEC, Wireshark, Nmap, Netcat, Burp Suite, Metasploit, Sysinternals, Packet Tracer, CrowdSec, Windows Server, VMware ESXi, Cloudflare, Python, PowerShell, and basic n8n.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="wrap reveal" id="contact">
+      <div class="section-head">
+        <div>
+          <h2>Contact</h2>
+          <p class="section-note">Clear contact paths and profile links in a clean GitHub Pages-ready layout.</p>
+        </div>
+      </div>
+      <div class="contact-card">
+        <div>
+          <h3>Let’s connect</h3>
+          <p class="contact-lead">
+            I’m building toward security analyst and SOC-focused opportunities where I can contribute with investigation discipline, defensive curiosity, and structured workflow thinking.
+          </p>
+          <div class="contact-highlights" aria-label="Contact highlights">
+            <span class="contact-pill">Tel Aviv, Israel</span>
+            <span class="contact-pill">Open to SOC & security analyst roles</span>
+            <span class="contact-pill">English · Hebrew · Spanish</span>
+          </div>
+          <div class="contact-actions">
+            <a class="btn btn-primary" href="mailto:orbenaribs@gmail.com">orbenaribs@gmail.com</a>
+          </div>
+          <p class="contact-note">
+            The fastest way to reach me is by email. You can also review my public work, technical writing, and professional background through the links on the right.
+          </p>
+          <p class="print-only">Email: orbenaribs@gmail.com</p>
+        </div>
+        <div class="contact-list" aria-label="Links">
+          <a class="contact-item" href="https://github.com/orba-cyops" target="_blank" rel="noreferrer"><strong>GitHub</strong><br><span class="muted">Projects, labs, and practical security work</span></a>
+          <a class="contact-item" href="https://www.linkedin.com/in/or-ben-ari" target="_blank" rel="noreferrer"><strong>LinkedIn</strong><br><span class="muted">Professional background and current focus</span></a>
+          <a class="contact-item" href="https://medium.com/@OrBenAri" target="_blank" rel="noreferrer"><strong>Medium</strong><br><span class="muted">Write-ups, learning notes, and technical reflections</span></a>
+          <div class="contact-item"><strong>Availability</strong><br><span class="muted">Actively exploring analyst and SOC-facing opportunities</span></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="wrap">
+    <div>Or Ben Ari · Single-file static portfolio built for clean presentation and GitHub Pages deployment.</div>
+  </footer>
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Or Ben Ari",
+      "jobTitle": "Security Analyst",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Tel Aviv",
+        "addressCountry": "IL"
+      },
+      "email": "mailto:orbenaribs@gmail.com",
+      "sameAs": [
+        "https://github.com/orba-cyops",
+        "https://www.linkedin.com/in/or-ben-ari",
+        "https://medium.com/@OrBenAri"
+      ]
+    }
+  </script>
+
+  <script>
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+  </script>
+</body>
+</html>
