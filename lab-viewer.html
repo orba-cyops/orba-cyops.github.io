@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lab Guide Viewer | Or Ben Ari</title>
+  <meta name="description" content="Rendered lab guide viewer for Or Ben Ari's cybersecurity portfolio and cyber course project library." />
+  <meta name="theme-color" content="#07111b" />
+  <meta name="color-scheme" content="dark" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #070e18;
+      --panel: rgba(10, 19, 32, 0.92);
+      --card: rgba(11, 21, 35, 0.88);
+      --line: rgba(120, 220, 180, 0.10);
+      --text: #e8f4ff;
+      --muted: #7a95b0;
+      --soft: #b8cfe0;
+      --accent: #7dffc0;
+      --accent-2: #5ec9ff;
+      --shadow: 0 12px 48px rgba(0,0,0,0.32);
+      --shadow-lg: 0 30px 80px rgba(0,0,0,0.42);
+      --radius: 20px;
+      --radius-sm: 12px;
+      --max: 1060px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
+      color: var(--text);
+      line-height: 1.7;
+      background: var(--bg);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background:
+        radial-gradient(ellipse 70% 55% at 10% 0%, rgba(94,201,255,0.07), transparent 60%),
+        radial-gradient(ellipse 60% 50% at 90% 10%, rgba(125,255,192,0.08), transparent 55%),
+        linear-gradient(180deg, #050d18 0%, #07111b 40%, #060f1a 100%);
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background-image:
+        linear-gradient(rgba(125,255,192,0.028) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(125,255,192,0.028) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: linear-gradient(180deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.08) 80%);
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .wrap {
+      width: min(calc(100% - 2.5rem), var(--max));
+      margin: 0 auto;
+    }
+
+    /* ── TOPBAR ── */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(20px) saturate(1.4);
+      -webkit-backdrop-filter: blur(20px) saturate(1.4);
+      background: rgba(5, 11, 20, 0.82);
+      border-bottom: 1px solid rgba(125,255,192,0.07);
+    }
+
+    .topbar-inner {
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+
+    .brand-mark {
+      width: 38px; height: 38px;
+      flex: 0 0 38px;
+      border-radius: 10px;
+      background: linear-gradient(145deg, rgba(125,255,192,0.15), rgba(94,201,255,0.12));
+      border: 1px solid rgba(125,255,192,0.18);
+      display: grid;
+      place-items: center;
+    }
+
+    .brand-mark svg { width: 22px; height: 22px; }
+
+    .brand-text strong {
+      display: block;
+      font-family: 'Syne', sans-serif;
+      font-size: 0.95rem; font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+    .brand-text span { display: block; font-size: 0.75rem; color: var(--muted); letter-spacing: 0.06em; }
+
+    .topbar-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 0.65rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.62rem 1rem;
+      border-radius: 9px;
+      border: 1px solid transparent;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.88rem; font-weight: 600;
+      transition: transform 0.18s, border-color 0.18s, background-color 0.18s;
+      cursor: pointer;
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    .btn-primary {
+      background: linear-gradient(135deg, rgba(125,255,192,0.16), rgba(94,201,255,0.12));
+      border-color: rgba(125,255,192,0.22);
+      color: var(--text);
+    }
+    .btn-primary:hover { border-color: rgba(125,255,192,0.35); }
+
+    .btn-ghost {
+      background: rgba(255,255,255,0.03);
+      border-color: rgba(255,255,255,0.08);
+      color: var(--soft);
+    }
+    .btn-ghost:hover { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.14); }
+
+    /* ── MAIN ── */
+    main { padding: 2rem 0 3.5rem; }
+
+    /* ── HERO CARD ── */
+    .hero-card {
+      padding: 1.6rem;
+      border-radius: var(--radius);
+      background: var(--panel);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow-lg);
+      margin-bottom: 1rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-card::after {
+      content: "";
+      position: absolute;
+      top: 0; left: 15%; right: 40%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(125,255,192,0.4), transparent);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 0.36rem 0.75rem;
+      border-radius: 999px;
+      background: rgba(125,255,192,0.07);
+      border: 1px solid rgba(125,255,192,0.15);
+      color: rgba(200,255,235,0.9);
+      font-size: 0.78rem; font-weight: 500;
+      letter-spacing: 0.07em; text-transform: uppercase;
+    }
+
+    h1 {
+      font-family: 'Syne', sans-serif;
+      margin: 0.85rem 0 0.5rem;
+      font-size: clamp(1.9rem, 3.5vw, 2.9rem);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1.05;
+    }
+
+    .hero-card p { color: var(--soft); max-width: 68ch; margin: 0 0 1rem; }
+
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.42rem 0.75rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.07);
+      background: rgba(255,255,255,0.03);
+      color: var(--muted);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      letter-spacing: 0.05em;
+    }
+
+    /* ── DOCUMENT SHELL ── */
+    .doc-shell {
+      border-radius: var(--radius);
+      background: var(--panel);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .doc-bar {
+      padding: 0.8rem 1.3rem;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .doc-status {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+    }
+
+    .status-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 6px var(--accent);
+      flex-shrink: 0;
+    }
+    .status-dot.loading { background: var(--accent-2); box-shadow: 0 0 6px var(--accent-2); animation: blink 1s step-end infinite; }
+    .status-dot.error   { background: #ff8080; box-shadow: 0 0 6px #ff8080; }
+
+    @keyframes blink { 50% { opacity: 0; } }
+
+    /* ── DOCUMENT BODY ── */
+    .doc {
+      padding: 2rem 2.5rem;
+    }
+
+    .doc[dir="rtl"] { text-align: right; }
+
+    .doc h1, .doc h2, .doc h3, .doc h4, .doc h5, .doc h6 {
+      font-family: 'Syne', sans-serif;
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+      margin: 2rem 0 0.75rem;
+      scroll-margin-top: 90px;
+    }
+    .doc h1:first-child, .doc h2:first-child, .doc h3:first-child { margin-top: 0; }
+    .doc h1 { font-size: clamp(1.7rem, 3vw, 2.3rem); font-weight: 800; }
+    .doc h2 { font-size: clamp(1.3rem, 2.5vw, 1.75rem); font-weight: 700; }
+    .doc h3 { font-size: clamp(1.1rem, 2vw, 1.3rem); font-weight: 700; }
+
+    .doc p, .doc li { color: var(--soft); font-size: 0.97rem; }
+
+    .doc ul, .doc ol { padding-inline-start: 1.4rem; }
+    .doc li + li { margin-top: 0.35rem; }
+
+    .doc blockquote {
+      margin: 1.25rem 0;
+      padding: 0.85rem 1.1rem;
+      border-inline-start: 3px solid rgba(94,201,255,0.65);
+      background: rgba(255,255,255,0.03);
+      border-radius: 0 12px 12px 0;
+    }
+
+    .doc hr {
+      border: 0;
+      border-top: 1px solid rgba(255,255,255,0.07);
+      margin: 2rem 0;
+    }
+
+    .doc a {
+      color: var(--accent-2);
+      text-decoration: underline;
+      text-underline-offset: 0.2em;
+    }
+
+    .doc img {
+      max-width: 100%;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.07);
+      display: block;
+      margin: 1.25rem 0;
+    }
+
+    .doc table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.25rem 0;
+      display: block;
+      overflow-x: auto;
+    }
+    .doc thead { background: rgba(255,255,255,0.04); }
+    .doc th, .doc td {
+      border: 1px solid rgba(255,255,255,0.07);
+      padding: 0.7rem 0.9rem;
+      text-align: left;
+      vertical-align: top;
+      min-width: 120px;
+      color: var(--soft);
+      font-size: 0.92rem;
+    }
+    .doc[dir="rtl"] th, .doc[dir="rtl"] td { text-align: right; }
+    .doc th { color: var(--text); font-weight: 600; }
+
+    .doc code {
+      font-family: 'JetBrains Mono', monospace;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 8px;
+      padding: 0.1rem 0.4rem;
+      font-size: 0.88em;
+      color: #d8f3ff;
+    }
+
+    .doc pre {
+      padding: 1.1rem 1.2rem;
+      background: rgba(4, 10, 18, 0.95);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 14px;
+      overflow-x: auto;
+      margin: 1.25rem 0;
+      box-shadow: inset 0 0 0 1px rgba(125,255,192,0.04);
+    }
+    .doc pre code {
+      padding: 0; border: 0; background: transparent;
+      display: block; white-space: pre;
+      font-size: 0.88rem; color: #c8dff0;
+    }
+
+    .doc details {
+      margin: 1rem 0;
+      padding: 0.8rem 1rem;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.025);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .doc summary { cursor: pointer; font-weight: 700; color: var(--text); }
+
+    .doc strong { color: var(--text); }
+
+    /* ── DIRECTORY (no-file state) ── */
+    .lab-grid {
+      padding: 1.5rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1rem;
+    }
+
+    .lab-card {
+      padding: 1.2rem;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.025);
+      border: 1px solid rgba(255,255,255,0.06);
+      transition: border-color 0.2s, background-color 0.2s, transform 0.2s;
+    }
+    .lab-card:hover { background: rgba(255,255,255,0.05); border-color: rgba(125,255,192,0.1); transform: translateY(-2px); }
+    .lab-card h3 { font-family: 'Syne', sans-serif; margin: 0 0 0.4rem; font-size: 1rem; font-weight: 700; }
+    .lab-card p  { color: var(--soft); font-size: 0.88rem; margin: 0 0 1rem; }
+
+    /* ── ERROR STATE ── */
+    .error-box {
+      margin: 1.5rem;
+      padding: 1.1rem 1.2rem;
+      border-radius: 14px;
+      background: rgba(255,128,128,0.07);
+      border: 1px solid rgba(255,128,128,0.18);
+      color: #ffd7d7;
+    }
+    .error-box code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85em;
+      background: rgba(255,255,255,0.07);
+      padding: 0.1rem 0.35rem;
+      border-radius: 6px;
+    }
+
+    @media (max-width: 760px) {
+      .wrap { width: min(calc(100% - 1.5rem), var(--max)); }
+      .topbar-inner { height: auto; padding: 0.75rem 0; flex-direction: column; align-items: flex-start; }
+      .topbar-actions { justify-content: flex-start; }
+      .doc { padding: 1.25rem; }
+      .hero-card { padding: 1.1rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        transition-duration: 0.001ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="wrap topbar-inner">
+      <a class="brand" href="index.html#projects" aria-label="Back to portfolio">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2L18.5 5V11.2C18.5 15.3 15.8 19.1 12 20.5C8.2 19.1 5.5 15.3 5.5 11.2V5L12 2Z" stroke="url(#gv)" stroke-width="1.4"/>
+            <path d="M13.2 6.7L9.4 12.2H12.1L10.8 17.2L14.9 11.3H12.1L13.2 6.7Z" fill="url(#gv)"/>
+            <defs>
+              <linearGradient id="gv" x1="5" y1="2" x2="19" y2="21" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#7dffc0"/>
+                <stop offset="1" stop-color="#5ec9ff"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </span>
+        <span class="brand-text">
+          <strong>Or Ben Ari</strong>
+          <span>Lab guide viewer</span>
+        </span>
+      </a>
+      <div class="topbar-actions">
+        <a class="btn btn-ghost" id="backLink" href="index.html#projects">← Back to portfolio</a>
+        <a class="btn btn-primary" id="sourceLink" href="#" target="_blank" rel="noreferrer" style="display:none">Open raw Markdown</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="wrap">
+
+      <div class="hero-card">
+        <span class="eyebrow">Rendered documentation</span>
+        <h1 id="pageTitle">Cyber course lab guide</h1>
+        <p id="pageSummary">This viewer renders the Markdown lab files in a readable page layout, replacing raw .md output on GitHub Pages.</p>
+        <div class="meta-row">
+          <span class="pill" id="filePill">Source: —</span>
+          <span class="pill" id="modePill">Markdown → HTML</span>
+        </div>
+      </div>
+
+      <div class="doc-shell">
+        <div class="doc-bar">
+          <div class="doc-status">
+            <span class="status-dot loading" id="statusDot" aria-hidden="true"></span>
+            <span id="statusText">Loading document…</span>
+          </div>
+        </div>
+        <article class="doc" id="doc"></article>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script>
+    // ─── Lab registry ───────────────────────────────────────────────────────────
+    // Keys must match the EXACT filename in the repository root.
+    const LABS = {
+      "CHEATSHEET-NETWORKING-EXAM.md": {
+        title: "Networking Enterprise Lab",
+        summary: "Multi-site networking lab with VLAN segmentation, inter-VLAN routing, OSPF, NAT, DHCP relay, STP, and connectivity validation.",
+      },
+      "RunBook_System.md": {
+        title: "Windows Server & Active Directory Runbook",
+        summary: "Windows Server and AD lab guide covering domain setup, replication, OU design, DNS, DHCP, GPO, permissions, and backup tasks.",
+      },
+      "Linux_Essentials_Flashcard.md": {
+        title: "Linux Essentials Flashcards",
+        summary: "Fast-review Linux study guide with command-line notes, exam prep cues, and short explanations.",
+      },
+      "Exam Theory Answers.md": {
+        title: "Cyber Theory Study Guide",
+        summary: "Compact theory reference covering recon, scanning, exploitation concepts, malware analysis, and web security topics.",
+      },
+      "Exam Simulator EN.md": {
+        title: "Practical Exam Simulator",
+        summary: "Scenario-based practice guide with hints and full answers for AD, Nmap, Wireshark, Hydra, log analysis, and malware research.",
+      }
+    };
+
+    // ─── DOM refs ───────────────────────────────────────────────────────────────
+    const docEl      = document.getElementById('doc');
+    const statusDot  = document.getElementById('statusDot');
+    const statusText = document.getElementById('statusText');
+    const titleEl    = document.getElementById('pageTitle');
+    const summaryEl  = document.getElementById('pageSummary');
+    const filePill   = document.getElementById('filePill');
+    const sourceLink = document.getElementById('sourceLink');
+
+    // ─── Marked config ──────────────────────────────────────────────────────────
+    marked.setOptions({ gfm: true, breaks: false });
+
+    // ─── Helpers ────────────────────────────────────────────────────────────────
+    function setStatus(state, text) {
+      statusDot.className = 'status-dot ' + (state === 'ok' ? '' : state);
+      statusText.textContent = text;
+    }
+
+    function safeText(v) {
+      return String(v || '').replace(/[<>&"]/g, c =>
+        ({ '<':'&lt;', '>':'&gt;', '&':'&amp;', '"':'&quot;' }[c]));
+    }
+
+    function inferDir(markdown) {
+      const he = (markdown.match(/[֐-׿]/g) || []).length;
+      const en = (markdown.match(/[A-Za-z]/g) || []).length;
+      return he > Math.max(60, en * 0.16) ? 'rtl' : 'ltr';
+    }
+
+    function decorateLinks() {
+      docEl.querySelectorAll('a[href^="http"]').forEach(a => {
+        a.setAttribute('target', '_blank');
+        a.setAttribute('rel', 'noreferrer');
+      });
+    }
+
+    // ─── Directory (no file selected) ───────────────────────────────────────────
+    function renderDirectory() {
+      titleEl.textContent  = 'Course lab library';
+      summaryEl.textContent = 'Select a lab guide to open it in this rendered documentation view.';
+      filePill.textContent  = 'Source: select a lab below';
+      sourceLink.style.display = 'none';
+      setStatus('ok', 'Available lab guides');
+
+      const cards = Object.entries(LABS).map(([file, meta]) => {
+        const href = `lab-viewer.html?file=${encodeURIComponent(file)}&title=${encodeURIComponent(meta.title)}`;
+        return `<div class="lab-card">
+          <h3>${safeText(meta.title)}</h3>
+          <p>${safeText(meta.summary)}</p>
+          <a class="btn btn-primary" href="${href}">Open lab guide</a>
+        </div>`;
+      }).join('');
+
+      docEl.removeAttribute('dir');
+      docEl.innerHTML = `<div class="lab-grid" style="padding:0">${cards}</div>`;
+    }
+
+    // ─── Load and render Markdown ────────────────────────────────────────────────
+    async function loadMarkdown(file) {
+      if (!file || !(file in LABS)) {
+        renderDirectory();
+        return;
+      }
+
+      const meta  = LABS[file];
+      const title = new URLSearchParams(window.location.search).get('title') || meta.title;
+
+      titleEl.textContent  = title;
+      summaryEl.textContent = meta.summary;
+      filePill.textContent  = `Source: ${file}`;
+      sourceLink.href         = encodeURI(file);
+      sourceLink.style.display = 'inline-flex';
+      setStatus('loading', 'Loading document…');
+
+      try {
+        const res = await fetch(encodeURI(file), { cache: 'no-store' });
+        if (!res.ok) throw new Error(`HTTP ${res.status} — ${res.statusText}`);
+
+        const markdown = await res.text();
+        const dir = inferDir(markdown);
+        docEl.setAttribute('dir', dir);
+        docEl.innerHTML = marked.parse(markdown);
+        decorateLinks();
+        setStatus('ok', `Rendered · ${dir === 'rtl' ? 'RTL-aware layout' : 'LTR layout'}`);
+
+        document.title = `${title} | Or Ben Ari`;
+
+      } catch (err) {
+        docEl.removeAttribute('dir');
+        docEl.innerHTML = `<div class="error-box">
+          <strong>Could not load this Markdown file.</strong><br><br>
+          This viewer uses <code>fetch()</code> to load <code>${safeText(file)}</code>. Possible causes:
+          <ul style="margin-top:0.75rem">
+            <li>The site is being opened from a local <code>file://</code> path — browsers block local fetch requests. Serve from a web server or GitHub Pages.</li>
+            <li>The file doesn't exist at the expected path: <code>${safeText(file)}</code></li>
+          </ul>
+          Error: <code>${safeText(err.message)}</code>
+        </div>`;
+        setStatus('error', 'Render failed');
+      }
+    }
+
+    // ─── Init ────────────────────────────────────────────────────────────────────
+    const requestedFile = new URLSearchParams(window.location.search).get('file');
+    loadMarkdown(requestedFile);
+  </script>
+</body>
+</html>
